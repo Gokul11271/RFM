@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, 
-  Upload, 
-  RefreshCw, 
   BarChart3, 
-  Layers, 
-  ShieldAlert, 
-  MessageSquareText,
-  FileSpreadsheet,
-  Download,
-  CheckCircle2,
-  ArrowRight,
-  Compass,
-  ArrowLeft
+  CheckCircle2, 
+  Compass
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -75,7 +66,7 @@ export default function App() {
   const handleLoadSample = async (notify = true, switchToDashboard = true) => {
     setIsLoading(true);
     try {
-      if (notify) showSnackbar('Loading Global E-Commerce Retail dataset...', 'info');
+      if (notify) showSnackbar('Loading E-Commerce Retail dataset...', 'info');
       const data = await loadSampleAnalysis(apiKey);
       setRfmData(data);
       setActiveDatasetName('E-Commerce Retail');
@@ -84,7 +75,7 @@ export default function App() {
         setCurrentView('dashboard');
       }
       if (notify) {
-        showSnackbar('E-Commerce Retail dataset loaded & analyzed!', 'success');
+        showSnackbar('E-Commerce Retail dataset analyzed!', 'success');
         confetti({ particleCount: 35, spread: 50, origin: { y: 0.85 } });
       }
     } catch (err) {
@@ -105,7 +96,7 @@ export default function App() {
         setCurrentView('dashboard');
       }
       if (notify) {
-        showSnackbar('B2B SaaS dataset loaded & analyzed!', 'success');
+        showSnackbar('B2B SaaS dataset analyzed!', 'success');
         confetti({ particleCount: 35, spread: 50, origin: { y: 0.85 } });
       }
     } catch (err) {
@@ -142,7 +133,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-[#090b10] text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
       
       {/* Universal Header */}
       <Header
@@ -173,29 +164,29 @@ export default function App() {
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-20">
           
           {/* Subheader Banner / Return to Guide */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-indigo-900 to-slate-900 text-white shadow-md">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md text-white shadow-xl">
             <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-xl bg-white/10 text-indigo-300">
+              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
                 <BarChart3 className="w-5 h-5" />
               </div>
               <div>
                 <h2 className="text-sm font-bold flex items-center space-x-2">
                   <span>Executive RFM Intelligence Studio</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    Live Model
+                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-mono">
+                    Model Active
                   </span>
                 </h2>
-                <p className="text-xs text-slate-300">
-                  Active Dataset: <strong className="text-white">{activeDatasetName || 'Default E-Commerce'}</strong> · {rfmData?.kpis?.total_customers?.toLocaleString() || 0} Analyzed Accounts
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Dataset: <strong className="text-white font-medium">{activeDatasetName || 'E-Commerce Retail'}</strong> · {rfmData?.kpis?.total_customers?.toLocaleString() || 0} Analyzed Accounts
                 </p>
               </div>
             </div>
 
             <button
               onClick={() => setCurrentView('landing')}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-slate-200 hover:text-white transition-colors cursor-pointer w-fit"
+              className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] text-xs font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer border border-white/[0.08] w-fit"
             >
-              <Compass className="w-3.5 h-3.5 text-indigo-300" />
+              <Compass className="w-3.5 h-3.5 text-amber-400" />
               <span>Explore RFM Guide & Simulator</span>
             </button>
           </div>
@@ -262,22 +253,22 @@ export default function App() {
       {rfmData && (
         <button
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-6 right-6 z-40 px-4 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-full shadow-lg shadow-indigo-600/30 flex items-center space-x-2 transition-transform hover:scale-105 cursor-pointer"
+          className="fixed bottom-6 right-6 z-40 px-4 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-full shadow-2xl shadow-amber-500/20 flex items-center space-x-2 transition-transform hover:scale-105 cursor-pointer font-bold text-xs"
         >
-          <Sparkles className="w-5 h-5 text-amber-300" />
-          <span className="text-xs font-bold tracking-wide">Ask Strategy AI</span>
+          <Sparkles className="w-4 h-4 text-slate-950" />
+          <span>Ask Strategy AI</span>
         </button>
       )}
 
       {/* Snackbar Alert */}
       {snackbar && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-5 duration-200">
-          <div className={`px-4 py-2.5 rounded-xl shadow-lg text-xs font-medium flex items-center space-x-2 ${
+          <div className={`px-4 py-2.5 rounded-2xl shadow-2xl text-xs font-medium flex items-center space-x-2 border backdrop-blur-xl ${
             snackbar.type === 'success' 
-              ? 'bg-slate-900 text-white border border-slate-700' 
+              ? 'bg-[#0e121a]/95 text-white border-emerald-500/30' 
               : snackbar.type === 'error'
-              ? 'bg-rose-600 text-white'
-              : 'bg-indigo-600 text-white'
+              ? 'bg-rose-900/90 text-white border-rose-500/40'
+              : 'bg-[#0e121a]/95 text-white border-amber-500/30'
           }`}>
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>{snackbar.message}</span>
