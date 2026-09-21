@@ -42,13 +42,13 @@ export default function SegmentDonut({ segments, onSelectSegment, selectedSegmen
               Customers: <strong className="text-white">{d.raw.customer_count.toLocaleString()}</strong> ({d.raw.pct_of_customers}%)
             </p>
             <p className="text-slate-300">
-              Revenue: <strong className="text-white">${d.raw.total_revenue.toLocaleString()}</strong> ({d.raw.pct_of_revenue}%)
+              Revenue: <strong className="text-white">₹{d.raw.total_revenue.toLocaleString()}</strong> ({d.raw.pct_of_revenue}%)
             </p>
             <p className="text-slate-300">
               Avg Recency: <strong className="text-white">{d.raw.avg_recency_days}d</strong>
             </p>
             <p className="text-slate-300">
-              Avg Spend: <strong className="text-white">${d.raw.avg_monetary.toFixed(2)}</strong>
+              Avg Spend: <strong className="text-white">₹{d.raw.avg_monetary.toFixed(2)}</strong>
             </p>
           </div>
           <p className="text-[10px] text-slate-400 mt-2 font-medium">Click slice to open strategy playbook →</p>
@@ -146,7 +146,7 @@ export default function SegmentDonut({ segments, onSelectSegment, selectedSegmen
             />
             <span>{item.name}</span>
             <span className="ml-1 text-[9px] opacity-70 font-mono">
-              ({metric === 'customers' ? `${item.pct}%` : `$${(item.value / 1000).toFixed(1)}k`})
+              ({metric === 'customers' ? `${item.pct}%` : `₹${(item.value / 1000).toFixed(1)}k`})
             </span>
           </button>
         ))}

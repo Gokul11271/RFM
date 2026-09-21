@@ -118,8 +118,8 @@ export default function ExportModal({ isOpen, onClose, rfmData, activeDatasetNam
 
       const kpiData = [
         ["Total Customers", `${kpis.total_customers.toLocaleString()}`],
-        ["Total Revenue", `$${kpis.total_revenue.toLocaleString()}`],
-        ["Average Order Value", `$${kpis.avg_order_value.toFixed(2)}`],
+        ["Total Revenue", `₹${kpis.total_revenue.toLocaleString()}`],
+        ["Average Order Value", `₹${kpis.avg_order_value.toFixed(2)}`],
         ["Champions Revenue Share", `${kpis.champions_revenue_pct}%`],
         ["At-Risk Revenue Exposure", `${kpis.at_risk_revenue_pct}%`],
         ["Average Recency", `${kpis.avg_recency_days} days`]

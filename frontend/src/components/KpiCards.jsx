@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, DollarSign, Crown, AlertOctagon, Clock, Calendar, Sparkles } from 'lucide-react';
+import { Users, IndianRupee, Crown, AlertOctagon, Clock, Calendar, Sparkles } from 'lucide-react';
 
 export default function KpiCards({ kpis }) {
   if (!kpis) return null;
@@ -31,9 +31,9 @@ export default function KpiCards({ kpis }) {
     },
     {
       title: 'Cumulative Revenue',
-      value: `$${total_revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      subtitle: `AOV: $${avg_order_value.toFixed(2)} / basket`,
-      icon: DollarSign,
+      value: `₹${total_revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      subtitle: `AOV: ₹${avg_order_value.toFixed(2)} / basket`,
+      icon: IndianRupee,
       accentBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     },
     {

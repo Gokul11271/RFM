@@ -81,12 +81,12 @@ export default function SegmentDrawer({
             </div>
             <div className="bg-white/[0.03] p-2.5 rounded-xl border border-white/[0.06]">
               <span className="text-[9px] text-slate-400 font-semibold uppercase block font-sans">Revenue</span>
-              <span className="text-sm font-bold text-emerald-400">${segment.total_revenue.toLocaleString()}</span>
+              <span className="text-sm font-bold text-emerald-400">₹{segment.total_revenue.toLocaleString()}</span>
               <span className="text-[10px] text-slate-400 block">({segment.pct_of_revenue}%)</span>
             </div>
             <div className="bg-white/[0.03] p-2.5 rounded-xl border border-white/[0.06]">
               <span className="text-[9px] text-slate-400 font-semibold uppercase block font-sans">Avg Spend</span>
-              <span className="text-sm font-bold text-white">${segment.avg_monetary.toFixed(0)}</span>
+              <span className="text-sm font-bold text-white">₹{segment.avg_monetary.toFixed(0)}</span>
               <span className="text-[10px] text-slate-400 block">{segment.avg_frequency} orders</span>
             </div>
             <div className="bg-white/[0.03] p-2.5 rounded-xl border border-white/[0.06]">

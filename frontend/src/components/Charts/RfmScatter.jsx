@@ -40,7 +40,7 @@ export default function RfmScatter({ scatterData, onSelectSegment }) {
           </div>
           <p className="font-semibold text-xs mt-2" style={{ color: SEGMENT_COLORS[data.segment] || '#10b981' }}>{data.segment}</p>
           <div className="mt-1.5 space-y-0.5 text-slate-300 font-mono text-[11px]">
-            <p>Spend: <strong className="text-emerald-400">${data.monetary.toLocaleString()}</strong></p>
+            <p>Spend: <strong className="text-emerald-400">₹{data.monetary.toLocaleString()}</strong></p>
             <p>Orders: <strong className="text-indigo-300">{data.frequency}</strong></p>
             <p>Recency: <strong className="text-slate-200">{data.recency}d ago</strong></p>
           </div>
@@ -77,11 +77,11 @@ export default function RfmScatter({ scatterData, onSelectSegment }) {
               type="number"
               dataKey="monetary"
               name="Monetary Spend"
-              unit="$"
+              unit="₹"
               tickLine={false}
               axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
               tick={{ fontSize: 10, fill: '#64748b' }}
-              label={{ value: 'Spend ($)', position: 'insideBottom', offset: -10, fontSize: 10, fill: '#64748b' }}
+              label={{ value: 'Spend (₹)', position: 'insideBottom', offset: -10, fontSize: 10, fill: '#64748b' }}
             />
             <YAxis
               type="number"

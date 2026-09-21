@@ -258,7 +258,7 @@ export default function SegmentTable({
 
                   {/* Monetary */}
                   <td className="py-3.5 px-4 text-right font-mono font-semibold text-emerald-400">
-                    ${row.monetary.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    ₹{row.monetary.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </td>
 
                   {/* Frequency */}
@@ -270,7 +270,7 @@ export default function SegmentTable({
 
                   {/* AOV */}
                   <td className="py-3.5 px-4 text-right font-mono text-slate-400">
-                    ${row.avg_order_value.toFixed(2)}
+                    ₹{row.avg_order_value.toFixed(2)}
                   </td>
 
                   {/* Recency */}

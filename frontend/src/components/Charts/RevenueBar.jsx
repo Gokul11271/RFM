@@ -38,7 +38,7 @@ export default function RevenueBar({ segments, onSelectSegment }) {
         <div className="bg-[#0e121a]/95 text-white p-3.5 rounded-2xl shadow-2xl text-xs border border-white/[0.12] pointer-events-none backdrop-blur-xl">
           <p className="font-extrabold text-white" style={{ color: SEGMENT_COLORS[d.name] || '#10b981' }}>{d.name}</p>
           <div className="mt-2 space-y-1 text-slate-300 font-mono text-[11px]">
-            <p>Total Revenue: <strong className="text-emerald-400">${d.revenue.toLocaleString()}</strong> ({d.pctRevenue}%)</p>
+            <p>Total Revenue: <strong className="text-emerald-400">₹{d.revenue.toLocaleString()}</strong> ({d.pctRevenue}%)</p>
             <p>Customer Accounts: <strong className="text-indigo-300">{d.customers.toLocaleString()}</strong> ({d.pctCustomers}%)</p>
           </div>
           <p className="text-[10px] text-slate-400 mt-2 font-medium">Click bar to open strategy playbook →</p>
@@ -74,7 +74,7 @@ export default function RevenueBar({ segments, onSelectSegment }) {
           >
             <XAxis
               type="number"
-              tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+              tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`}
               tick={{ fontSize: 10, fill: '#64748b' }}
               tickLine={false}
               axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
