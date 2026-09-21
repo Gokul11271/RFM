@@ -60,6 +60,29 @@ export async function loadSampleAnalysis(apiKey = null) {
   return res.json();
 }
 
+export async function loadSampleSaasAnalysis(apiKey = null) {
+  let url = `${API_BASE}/rfm/sample-saas`;
+  if (apiKey) {
+    url += `?api_key=${encodeURIComponent(apiKey)}`;
+  }
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail || 'Failed to load SaaS sample dataset');
+  }
+
+  return res.json();
+}
+
+export async function fetchSampleDatasets() {
+  const res = await fetch(`${API_BASE}/rfm/datasets`);
+  if (!res.ok) {
+    return [];
+  }
+  return res.json();
+}
+
 export async function askAiAssistant(question, rfmContext, apiKey = null, llmProvider = 'gemini') {
   const res = await fetch(`${API_BASE}/rfm/chat`, {
     method: 'POST',

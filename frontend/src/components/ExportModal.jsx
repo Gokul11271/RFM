@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Download, FileSpreadsheet, FileText, Code, CheckCircle2, X } from 'lucide-react';
+import { Download, FileSpreadsheet, FileText, Code, CheckCircle2, X, RefreshCw } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 export default function ExportModal({ isOpen, onClose, rfmData, activeDatasetName }) {
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+
   if (!isOpen || !rfmData) return null;
 
   const { kpis, segments, top_customers } = rfmData;
@@ -92,88 +92,100 @@ export default function ExportModal({ isOpen, onClose, rfmData, activeDatasetNam
     triggerConfetti();
   };
 
-  const exportPdfReport = () => {
-    const doc = new jsPDF();
+  const exportPdfReport = async () => {
+    setIsExportingPdf(true);
+    try {
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable')
+      ]);
 
-    // Title & Header
-    doc.setFontSize(20);
-    doc.setTextColor(30, 27, 75); // Dark Indigo
-    doc.text("RFM Customer Analytics Executive Report", 14, 20);
+      const doc = new jsPDF();
 
-    doc.setFontSize(10);
-    doc.setTextColor(100, 116, 139);
-    doc.text(`Generated on: ${new Date().toLocaleDateString()} | Dataset: ${activeDatasetName || 'Online Retail'}`, 14, 27);
+      // Title & Header
+      doc.setFontSize(20);
+      doc.setTextColor(30, 27, 75);
+      doc.text("RFM Customer Analytics Executive Report", 14, 20);
 
-    // KPI Summary
-    doc.setFontSize(12);
-    doc.setTextColor(15, 23, 42);
-    doc.text("Executive Summary KPIs", 14, 38);
+      doc.setFontSize(10);
+      doc.setTextColor(100, 116, 139);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()} | Dataset: ${activeDatasetName || 'Customer Transactions'}`, 14, 27);
 
-    const kpiData = [
-      ["Total Customers", `${kpis.total_customers.toLocaleString()}`],
-      ["Total Revenue", `$${kpis.total_revenue.toLocaleString()}`],
-      ["Average Order Value", `$${kpis.avg_order_value.toFixed(2)}`],
-      ["Champions Revenue Share", `${kpis.champions_revenue_pct}%`],
-      ["At-Risk Revenue Exposure", `${kpis.at_risk_revenue_pct}%`],
-      ["Average Recency", `${kpis.avg_recency_days} days`]
-    ];
+      // KPI Summary
+      doc.setFontSize(12);
+      doc.setTextColor(15, 23, 42);
+      doc.text("Executive Summary KPIs", 14, 38);
 
-    autoTable(doc, {
-      startY: 42,
-      head: [["Metric", "Value"]],
-      body: kpiData,
-      theme: 'grid',
-      headStyles: { fillColor: [79, 70, 229] },
-      styles: { fontSize: 9 }
-    });
+      const kpiData = [
+        ["Total Customers", `${kpis.total_customers.toLocaleString()}`],
+        ["Total Revenue", `$${kpis.total_revenue.toLocaleString()}`],
+        ["Average Order Value", `$${kpis.avg_order_value.toFixed(2)}`],
+        ["Champions Revenue Share", `${kpis.champions_revenue_pct}%`],
+        ["At-Risk Revenue Exposure", `${kpis.at_risk_revenue_pct}%`],
+        ["Average Recency", `${kpis.avg_recency_days} days`]
+      ];
 
-    // Segment Summary Table
-    const lastY = doc.lastAutoTable.finalY || 100;
-    doc.setFontSize(12);
-    doc.text("Segment Breakdown & AI Risk Assessment", 14, lastY + 12);
+      autoTable(doc, {
+        startY: 42,
+        head: [["Metric", "Value"]],
+        body: kpiData,
+        theme: 'grid',
+        headStyles: { fillColor: [15, 23, 42] },
+        styles: { fontSize: 9 }
+      });
 
-    const segRows = segments.map(s => [
-      s.segment,
-      s.customer_count.toLocaleString(),
-      `${s.pct_of_customers}%`,
-      `$${s.total_revenue.toLocaleString()}`,
-      `${s.pct_of_revenue}%`,
-      `${s.avg_recency_days}d`,
-      s.insight?.churn_risk || 'N/A',
-      s.insight?.retention_priority || 'N/A'
-    ]);
+      // Segment Summary Table
+      const lastY = doc.lastAutoTable.finalY || 100;
+      doc.setFontSize(12);
+      doc.text("Segment Breakdown & AI Risk Assessment", 14, lastY + 12);
 
-    autoTable(doc, {
-      startY: lastY + 16,
-      head: [["Segment", "Customers", "% Cust", "Revenue", "% Rev", "Avg Rec", "Churn Risk", "Priority"]],
-      body: segRows,
-      theme: 'striped',
-      headStyles: { fillColor: [79, 70, 229] },
-      styles: { fontSize: 8 }
-    });
+      const segRows = segments.map(s => [
+        s.segment,
+        s.customer_count.toLocaleString(),
+        `${s.pct_of_customers}%`,
+        `$${s.total_revenue.toLocaleString()}`,
+        `${s.pct_of_revenue}%`,
+        `${s.avg_recency_days}d`,
+        s.insight?.churn_risk || 'N/A',
+        s.insight?.retention_priority || 'N/A'
+      ]);
 
-    doc.save(`rfm_executive_report_${Date.now()}.pdf`);
-    triggerConfetti();
+      autoTable(doc, {
+        startY: lastY + 16,
+        head: [["Segment", "Customers", "% Cust", "Revenue", "% Rev", "Avg Rec", "Churn Risk", "Priority"]],
+        body: segRows,
+        theme: 'striped',
+        headStyles: { fillColor: [15, 23, 42] },
+        styles: { fontSize: 8 }
+      });
+
+      doc.save(`rfm_executive_report_${Date.now()}.pdf`);
+      setIsExportingPdf(false);
+      triggerConfetti();
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      setIsExportingPdf(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="relative bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="relative bg-[#0e121a] text-slate-100 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-white/[0.10] animate-in fade-in zoom-in-95 duration-150">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-          <div className="flex items-center space-x-2">
-            <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+        <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
               <Download className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900">Export Analytics & Reports</h3>
-              <p className="text-xs text-slate-500">Download customer lists, segments, or PDF summary</p>
+              <h3 className="text-base font-bold text-white">Export Analytics & Reports</h3>
+              <p className="text-xs text-slate-400">Download customer lists, segments, or PDF summary</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors"
+            className="p-1 text-slate-400 hover:text-white rounded-xl hover:bg-white/[0.06] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -185,78 +197,79 @@ export default function ExportModal({ isOpen, onClose, rfmData, activeDatasetNam
           {/* PDF Executive Report */}
           <button
             onClick={exportPdfReport}
-            className="w-full p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/30 flex items-center justify-between transition-all group text-left cursor-pointer"
+            disabled={isExportingPdf}
+            className="w-full p-4 rounded-2xl border border-white/[0.08] hover:border-amber-400/40 bg-white/[0.02] hover:bg-white/[0.05] flex items-center justify-between transition-all group text-left cursor-pointer disabled:opacity-60"
           >
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-lg bg-rose-50 text-rose-600 border border-rose-100 group-hover:scale-105 transition-transform">
-                <FileText className="w-5 h-5" />
+              <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 group-hover:scale-105 transition-transform">
+                {isExportingPdf ? <RefreshCw className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5" />}
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-900">Executive PDF Summary Report</p>
-                <p className="text-[11px] text-slate-500">Includes KPIs, segment distribution, and AI risk analysis</p>
+                <p className="text-xs font-bold text-white">Executive PDF Summary Report</p>
+                <p className="text-[11px] text-slate-400">Includes KPIs, segment distribution, and AI risk analysis</p>
               </div>
             </div>
-            <Download className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
+            <Download className="w-4 h-4 text-slate-500 group-hover:text-amber-400" />
           </button>
 
           {/* Customer Roster CSV */}
           <button
             onClick={exportCustomersCsv}
-            className="w-full p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/30 flex items-center justify-between transition-all group text-left cursor-pointer"
+            className="w-full p-4 rounded-2xl border border-white/[0.08] hover:border-emerald-400/40 bg-white/[0.02] hover:bg-white/[0.05] flex items-center justify-between transition-all group text-left cursor-pointer"
           >
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:scale-105 transition-transform">
                 <FileSpreadsheet className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-900">Customer Segments Roster (.CSV)</p>
-                <p className="text-[11px] text-slate-500">Row-by-row customer IDs with scores and assigned segments</p>
+                <p className="text-xs font-bold text-white">Customer Segments Roster (.CSV)</p>
+                <p className="text-[11px] text-slate-400">Row-by-row customer IDs with scores and assigned segments</p>
               </div>
             </div>
-            <Download className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
+            <Download className="w-4 h-4 text-slate-500 group-hover:text-emerald-400" />
           </button>
 
           {/* Segment Summary CSV */}
           <button
             onClick={exportSegmentsCsv}
-            className="w-full p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/30 flex items-center justify-between transition-all group text-left cursor-pointer"
+            className="w-full p-4 rounded-2xl border border-white/[0.08] hover:border-indigo-400/40 bg-white/[0.02] hover:bg-white/[0.05] flex items-center justify-between transition-all group text-left cursor-pointer"
           >
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 group-hover:scale-105 transition-transform">
                 <FileSpreadsheet className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-900">Segment Aggregation Table (.CSV)</p>
-                <p className="text-[11px] text-slate-500">11 segment metrics, revenues, average order values, and churn tiers</p>
+                <p className="text-xs font-bold text-white">Segment Aggregation Table (.CSV)</p>
+                <p className="text-[11px] text-slate-400">11 segment metrics, revenues, and churn risk tiers</p>
               </div>
             </div>
-            <Download className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
+            <Download className="w-4 h-4 text-slate-500 group-hover:text-indigo-400" />
           </button>
 
           {/* Full JSON Payload */}
           <button
             onClick={exportJsonReport}
-            className="w-full p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/30 flex items-center justify-between transition-all group text-left cursor-pointer"
+            className="w-full p-4 rounded-2xl border border-white/[0.08] hover:border-purple-400/40 bg-white/[0.02] hover:bg-white/[0.05] flex items-center justify-between transition-all group text-left cursor-pointer"
           >
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-lg bg-purple-50 text-purple-600 border border-purple-100 group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 group-hover:scale-105 transition-transform">
                 <Code className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-900">Complete Raw JSON Payload (.JSON)</p>
-                <p className="text-[11px] text-slate-500">Includes all calculated distributions, AI narratives, and histograms</p>
+                <p className="text-xs font-bold text-white">Complete Raw JSON Payload (.JSON)</p>
+                <p className="text-[11px] text-slate-400">Includes all calculated distributions, AI narratives, and histograms</p>
               </div>
             </div>
-            <Download className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
+            <Download className="w-4 h-4 text-slate-500 group-hover:text-purple-400" />
           </button>
 
         </div>
 
         {/* Footer */}
-        <div className="pt-4 border-t border-slate-100 flex justify-end">
+        <div className="pt-4 border-t border-white/[0.08] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+            className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white hover:bg-white/[0.06] rounded-xl transition-colors cursor-pointer"
           >
             Close
           </button>

@@ -10,11 +10,14 @@ import {
   FileSpreadsheet,
   Download,
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  Compass,
+  ArrowLeft
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 import Header from './components/Header';
+import LandingPage from './components/LandingPage/LandingPage';
 import UploadModal from './components/UploadModal';
 import ColumnMapper from './components/ColumnMapper';
 import KpiCards from './components/KpiCards';
@@ -27,10 +30,12 @@ import SegmentDrawer from './components/SegmentDrawer';
 import AskAiChat from './components/AskAiChat';
 import ExportModal from './components/ExportModal';
 import ApiKeyModal from './components/ApiKeyModal';
+import ShimmerDashboard from './components/ShimmerDashboard';
 
-import { loadSampleAnalysis, analyzeDataset } from './services/api';
+import { loadSampleAnalysis, loadSampleSaasAnalysis, analyzeDataset } from './services/api';
 
 export default function App() {
+  const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'dashboard'
   const [rfmData, setRfmData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeDatasetName, setActiveDatasetName] = useState('');
@@ -55,9 +60,9 @@ export default function App() {
   const [apiKey, setApiKey] = useState('');
   const [llmProvider, setLlmProvider] = useState('gemini');
 
-  // Auto-load sample dataset on first mount
+  // Pre-load default retail dataset silently in background
   useEffect(() => {
-    handleLoadSample(false);
+    handleLoadSample(false, false);
   }, []);
 
   const showSnackbar = (message, type = 'info') => {
@@ -67,21 +72,45 @@ export default function App() {
     }, 4000);
   };
 
-  const handleLoadSample = async (notify = true) => {
+  const handleLoadSample = async (notify = true, switchToDashboard = true) => {
     setIsLoading(true);
     try {
-      if (notify) showSnackbar('Loading UCI Online Retail sample dataset...', 'info');
+      if (notify) showSnackbar('Loading Global E-Commerce Retail dataset...', 'info');
       const data = await loadSampleAnalysis(apiKey);
       setRfmData(data);
-      setActiveDatasetName('UCI Online Retail (Sample)');
+      setActiveDatasetName('E-Commerce Retail');
       setIsLoading(false);
+      if (switchToDashboard) {
+        setCurrentView('dashboard');
+      }
       if (notify) {
-        showSnackbar('Sample dataset loaded & analyzed successfully!', 'success');
+        showSnackbar('E-Commerce Retail dataset loaded & analyzed!', 'success');
         confetti({ particleCount: 35, spread: 50, origin: { y: 0.85 } });
       }
     } catch (err) {
       setIsLoading(false);
-      showSnackbar(`Failed to load sample: ${err.message}`, 'error');
+      showSnackbar(`Failed to load retail sample: ${err.message}`, 'error');
+    }
+  };
+
+  const handleLoadSaasSample = async (notify = true, switchToDashboard = true) => {
+    setIsLoading(true);
+    try {
+      if (notify) showSnackbar('Loading B2B SaaS Subscriptions dataset...', 'info');
+      const data = await loadSampleSaasAnalysis(apiKey);
+      setRfmData(data);
+      setActiveDatasetName('B2B SaaS Subscriptions');
+      setIsLoading(false);
+      if (switchToDashboard) {
+        setCurrentView('dashboard');
+      }
+      if (notify) {
+        showSnackbar('B2B SaaS dataset loaded & analyzed!', 'success');
+        confetti({ particleCount: 35, spread: 50, origin: { y: 0.85 } });
+      }
+    } catch (err) {
+      setIsLoading(false);
+      showSnackbar(`Failed to load SaaS sample: ${err.message}`, 'error');
     }
   };
 
@@ -103,6 +132,7 @@ export default function App() {
       setIsMapperOpen(false);
       setPendingFile(null);
       setPreviewData(null);
+      setCurrentView('dashboard');
       showSnackbar('Analysis complete! Segment dashboard updated.', 'success');
       confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
     } catch (err) {
@@ -112,12 +142,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-indigo-500 selection:text-white pb-16">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-indigo-500 selection:text-white">
       
-      {/* Header */}
+      {/* Universal Header */}
       <Header
+        currentView={currentView}
+        onNavigate={(view) => setCurrentView(view)}
         onOpenUpload={() => setIsUploadOpen(true)}
-        onLoadSample={() => handleLoadSample(true)}
+        onLoadSample={() => handleLoadSample(true, true)}
+        onLoadSaasSample={() => handleLoadSaasSample(true, true)}
         onOpenChat={() => setIsChatOpen(true)}
         onOpenExport={() => setIsExportOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
@@ -126,76 +159,104 @@ export default function App() {
         activeDatasetName={activeDatasetName}
       />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        
-        {/* Loading Spinner State */}
-        {isLoading && !rfmData && (
-          <div className="flex flex-col items-center justify-center py-28 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 shadow-md">
-              <RefreshCw className="w-6 h-6 animate-spin" />
+      {/* VIEW 1: Educational Landing Page & Methodology Guide */}
+      {currentView === 'landing' && (
+        <LandingPage
+          onLaunchDashboard={() => setCurrentView('dashboard')}
+          onLoadSample={() => handleLoadSample(true, true)}
+          onLoadSaasSample={() => handleLoadSaasSample(true, true)}
+        />
+      )}
+
+      {/* VIEW 2: Analytics Dashboard Studio */}
+      {currentView === 'dashboard' && (
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-20">
+          
+          {/* Subheader Banner / Return to Guide */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-indigo-900 to-slate-900 text-white shadow-md">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-xl bg-white/10 text-indigo-300">
+                <BarChart3 className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold flex items-center space-x-2">
+                  <span>Executive RFM Intelligence Studio</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    Live Model
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-300">
+                  Active Dataset: <strong className="text-white">{activeDatasetName || 'Default E-Commerce'}</strong> · {rfmData?.kpis?.total_customers?.toLocaleString() || 0} Analyzed Accounts
+                </p>
+              </div>
             </div>
-            <h3 className="text-base font-bold text-slate-800">Processing RFM Quantile Math</h3>
-            <p className="text-xs text-slate-500 mt-1 max-w-sm">
-              Calculating customer Recency, Frequency, and Monetary quintiles and generating plain-English executive playbooks...
-            </p>
+
+            <button
+              onClick={() => setCurrentView('landing')}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-slate-200 hover:text-white transition-colors cursor-pointer w-fit"
+            >
+              <Compass className="w-3.5 h-3.5 text-indigo-300" />
+              <span>Explore RFM Guide & Simulator</span>
+            </button>
           </div>
-        )}
 
-        {/* Dashboard Content */}
-        {rfmData && (
-          <div className="space-y-6 animate-in fade-in duration-250">
-            
-            {/* KPI Cards Row */}
-            <KpiCards kpis={rfmData.kpis} />
+          {/* Shimmer UI Loading State */}
+          {isLoading ? (
+            <ShimmerDashboard />
+          ) : rfmData ? (
+            <div className="space-y-6 animate-in fade-in duration-250">
+              
+              {/* KPI Cards Row */}
+              <KpiCards kpis={rfmData.kpis} />
 
-            {/* Visualizations Row 1: Donut + Scatter */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-5">
-                <SegmentDonut
+              {/* Visualizations Row 1: Donut + Scatter */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-5">
+                  <SegmentDonut
+                    segments={rfmData.segments}
+                    onSelectSegment={(seg) => setSelectedSegment(seg)}
+                    selectedSegment={selectedSegment}
+                  />
+                </div>
+                <div className="lg:col-span-7">
+                  <RfmScatter
+                    scatterData={rfmData.distributions.scatter_sample}
+                    onSelectSegment={(seg) => setSelectedSegment(seg)}
+                  />
+                </div>
+              </div>
+
+              {/* Visualizations Row 2: Revenue Bar + Recency Decay */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-6">
+                  <RevenueBar
+                    segments={rfmData.segments}
+                    onSelectSegment={(seg) => setSelectedSegment(seg)}
+                  />
+                </div>
+                <div className="lg:col-span-6">
+                  <RecencyDist
+                    distributions={rfmData.distributions}
+                  />
+                </div>
+              </div>
+
+              {/* Segment Drilldown Customer Table */}
+              <div>
+                <SegmentTable
+                  customers={rfmData.top_customers}
                   segments={rfmData.segments}
                   onSelectSegment={(seg) => setSelectedSegment(seg)}
-                  selectedSegment={selectedSegment}
+                  selectedSegmentFilter={selectedSegmentFilter}
+                  onSetSegmentFilter={(segName) => setSelectedSegmentFilter(segName)}
                 />
               </div>
-              <div className="lg:col-span-7">
-                <RfmScatter
-                  scatterData={rfmData.distributions.scatter_sample}
-                  onSelectSegment={(seg) => setSelectedSegment(seg)}
-                />
-              </div>
+
             </div>
+          ) : null}
 
-            {/* Visualizations Row 2: Revenue Bar + Recency Decay */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-6">
-                <RevenueBar
-                  segments={rfmData.segments}
-                  onSelectSegment={(seg) => setSelectedSegment(seg)}
-                />
-              </div>
-              <div className="lg:col-span-6">
-                <RecencyDist
-                  distributions={rfmData.distributions}
-                />
-              </div>
-            </div>
-
-            {/* Segment Drilldown Customer Table */}
-            <div>
-              <SegmentTable
-                customers={rfmData.top_customers}
-                segments={rfmData.segments}
-                onSelectSegment={(seg) => setSelectedSegment(seg)}
-                selectedSegmentFilter={selectedSegmentFilter}
-                onSetSegmentFilter={(segName) => setSelectedSegmentFilter(segName)}
-              />
-            </div>
-
-          </div>
-        )}
-
-      </main>
+        </main>
+      )}
 
       {/* Floating Action Button (FAB) for Ask AI */}
       {rfmData && (
@@ -229,7 +290,7 @@ export default function App() {
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
         onFileReady={handleFileReady}
-        onLoadSample={() => handleLoadSample(true)}
+        onLoadSample={() => handleLoadSample(true, true)}
       />
 
       <ColumnMapper

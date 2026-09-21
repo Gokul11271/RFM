@@ -2,8 +2,8 @@ import io
 import json
 import os
 import pandas as pd
-from typing import Optional, Dict, Any
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from typing import Optional, Dict, Any, List
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse
 
@@ -16,13 +16,20 @@ from .schemas import (
 from .rfm_engine import auto_detect_columns, process_rfm_data
 from .llm_service import enrich_segments_with_insights
 from .chat_service import answer_rfm_query
-from .sample_generator import ensure_sample_file_exists, generate_sample_ecommerce_data
+from .sample_generator import (
+    ensure_sample_file_exists, 
+    generate_sample_ecommerce_data,
+    generate_sample_saas_data
+)
 
 app = FastAPI(
     title="RFM Analytics Platform API",
-    description="Customer RFM Segmentation & LLM Strategy Narrative Engine",
-    version="1.0.0"
+    description="Customer RFM Segmentation & AI Strategy Narrative Engine",
+    version="1.1.0"
 )
+
+# In-memory cache for sample runs
+_SAMPLE_CACHE: Dict[str, Any] = {}
 
 # CORS configuration
 app.add_middleware(
@@ -33,14 +40,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ensure sample data exists on startup
 @app.on_event("startup")
 async def startup_event():
     ensure_sample_file_exists()
 
 @app.get("/api/health")
 async def health_check():
-    return {"status": "ok", "service": "RFM Analytics Platform API"}
+    return {"status": "ok", "service": "RFM Analytics Platform API", "version": "1.1.0"}
 
 
 @app.post("/api/rfm/upload-preview")
@@ -98,14 +104,10 @@ async def analyze_file(
             else:
                 raise HTTPException(status_code=400, detail="Unsupported file type.")
         else:
-            # If no file provided, fall back to sample
             sample_path = ensure_sample_file_exists()
             df = pd.read_csv(sample_path)
 
-        # Run RFM Engine
         result = process_rfm_data(df, mapping_dict)
-        
-        # Enrich segments with LLM insights
         enriched_segments = enrich_segments_with_insights(result["segments"], api_key=api_key)
         
         return RfmAnalysisResponse(
@@ -122,11 +124,47 @@ async def analyze_file(
 @app.get("/api/rfm/sample", response_model=RfmAnalysisResponse)
 async def analyze_sample(api_key: Optional[str] = None):
     """
-    Instant 1-click endpoint: Loads and analyzes the built-in UCI Online Retail sample dataset.
+    Instant 1-click endpoint: Loads and analyzes the built-in Retail sample dataset (with caching).
     """
+    cache_key = f"sample_retail_{api_key or 'default'}"
+    if cache_key in _SAMPLE_CACHE:
+        return _SAMPLE_CACHE[cache_key]
+
     try:
         sample_path = ensure_sample_file_exists()
         df = pd.read_csv(sample_path)
+
+        columns = list(df.columns)
+        mapping = auto_detect_columns(columns)
+
+        result = process_rfm_data(df, mapping)
+        enriched_segments = enrich_segments_with_insights(result["segments"], api_key=api_key)
+        preview_rows = df.head(5).fillna("").to_dict(orient="records")
+
+        response = RfmAnalysisResponse(
+            kpis=result["kpis"],
+            segments=enriched_segments,
+            top_customers=result["top_customers"],
+            distributions=result["distributions"],
+            detected_columns=mapping,
+            column_preview=preview_rows
+        )
+        _SAMPLE_CACHE[cache_key] = response
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Sample analysis error: {str(e)}")
+
+
+@app.get("/api/rfm/sample-saas", response_model=RfmAnalysisResponse)
+async def analyze_sample_saas(api_key: Optional[str] = None):
+    """
+    Instant 1-click endpoint: Loads and analyzes the B2B SaaS subscription dataset.
+    """
+    try:
+        sample_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sample_data")
+        saas_path = os.path.join(sample_dir, "saas_subscription_sample.csv")
+        ensure_sample_file_exists()
+        df = pd.read_csv(saas_path)
 
         columns = list(df.columns)
         mapping = auto_detect_columns(columns)
@@ -144,17 +182,57 @@ async def analyze_sample(api_key: Optional[str] = None):
             column_preview=preview_rows
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Sample analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"SaaS sample analysis error: {str(e)}")
+
+
+@app.get("/api/rfm/datasets")
+async def list_sample_datasets():
+    """Returns available sample datasets for download or instant demonstration."""
+    return [
+        {
+            "id": "ecommerce",
+            "title": "Global E-Commerce Retail (B2C)",
+            "description": "Multi-category shopping transactions covering all 11 customer loyalty and churn segments.",
+            "records": 4200,
+            "customers": 750,
+            "columns": ["CustomerID", "InvoiceID", "InvoiceDate", "Amount", "ProductCategory", "Quantity", "UnitPrice"],
+            "download_url": "/api/rfm/sample-csv"
+        },
+        {
+            "id": "saas",
+            "title": "B2B Cloud SaaS Subscriptions",
+            "description": "Monthly recurring revenue (MRR) billing cycles, tier upgrades, and account usage across 400 accounts.",
+            "records": 2800,
+            "customers": 400,
+            "columns": ["AccountID", "BillingID", "BillingDate", "MRR_Amount", "SubscriptionTier", "AddonUsageSpend"],
+            "download_url": "/api/rfm/sample-saas-csv"
+        }
+    ]
 
 
 @app.get("/api/rfm/sample-csv")
 async def download_sample_csv():
-    """Download the preloaded sample CSV file."""
-    sample_path = ensure_sample_file_exists()
+    """Download the Retail E-Commerce CSV dataset."""
+    ensure_sample_file_exists()
+    sample_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sample_data")
+    sample_path = os.path.join(sample_dir, "online_retail_sample.csv")
     return FileResponse(
         sample_path,
         media_type="text/csv",
-        filename="online_retail_rfm_sample.csv"
+        filename="ecommerce_retail_rfm_sample.csv"
+    )
+
+
+@app.get("/api/rfm/sample-saas-csv")
+async def download_saas_csv():
+    """Download the B2B SaaS Subscription CSV dataset."""
+    ensure_sample_file_exists()
+    sample_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sample_data")
+    saas_path = os.path.join(sample_dir, "saas_subscription_sample.csv")
+    return FileResponse(
+        saas_path,
+        media_type="text/csv",
+        filename="saas_subscriptions_rfm_sample.csv"
     )
 
 

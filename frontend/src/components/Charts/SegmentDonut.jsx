@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import { PieChart as PieIcon, Info } from 'lucide-react';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
+import { PieChart as PieIcon } from 'lucide-react';
 
 const SEGMENT_COLORS = {
   "Champions": "#10b981",
-  "Loyal Customers": "#3b82f6",
+  "Loyal Customers": "#6366f1",
   "Potential Loyalists": "#06b6d4",
-  "Recent Customers": "#0284c7",
-  "Promising": "#8b5cf6",
+  "Recent Customers": "#0ea5e9",
+  "Promising": "#a855f7",
   "Customers Needing Attention": "#f59e0b",
-  "About to Sleep": "#ea580c",
-  "At Risk": "#ef4444",
+  "About to Sleep": "#f97316",
+  "At Risk": "#f43f5e",
   "Can't Lose Them": "#e11d48",
   "Hibernating": "#64748b",
-  "Lost": "#94a3b8"
+  "Lost": "#475569"
 };
 
 export default function SegmentDonut({ segments, onSelectSegment, selectedSegment }) {
@@ -35,9 +35,9 @@ export default function SegmentDonut({ segments, onSelectSegment, selectedSegmen
     if (active && payload && payload.length) {
       const d = payload[0].payload;
       return (
-        <div className="bg-slate-900 text-white p-3 rounded-xl shadow-xl text-xs border border-slate-700 pointer-events-none">
-          <p className="font-bold text-sm text-indigo-300">{d.name}</p>
-          <div className="mt-1.5 space-y-1">
+        <div className="bg-[#0e121a]/95 text-white p-3.5 rounded-2xl shadow-2xl text-xs border border-white/[0.12] pointer-events-none backdrop-blur-xl">
+          <p className="font-extrabold text-sm text-white" style={{ color: d.color }}>{d.name}</p>
+          <div className="mt-2 space-y-1 font-mono text-[11px]">
             <p className="text-slate-300">
               Customers: <strong className="text-white">{d.raw.customer_count.toLocaleString()}</strong> ({d.raw.pct_of_customers}%)
             </p>
@@ -45,13 +45,13 @@ export default function SegmentDonut({ segments, onSelectSegment, selectedSegmen
               Revenue: <strong className="text-white">${d.raw.total_revenue.toLocaleString()}</strong> ({d.raw.pct_of_revenue}%)
             </p>
             <p className="text-slate-300">
-              Avg Recency: <strong className="text-white">{d.raw.avg_recency_days} days</strong>
+              Avg Recency: <strong className="text-white">{d.raw.avg_recency_days}d</strong>
             </p>
             <p className="text-slate-300">
               Avg Spend: <strong className="text-white">${d.raw.avg_monetary.toFixed(2)}</strong>
             </p>
           </div>
-          <p className="text-[10px] text-indigo-400 mt-2 font-medium">Click slice for AI strategy deep-dive →</p>
+          <p className="text-[10px] text-slate-400 mt-2 font-medium">Click slice to open strategy playbook →</p>
         </div>
       );
     }
@@ -62,38 +62,38 @@ export default function SegmentDonut({ segments, onSelectSegment, selectedSegmen
     <div className="material-card p-5 flex flex-col justify-between h-full">
       
       {/* Card Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div className="flex items-center space-x-2">
-          <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
+      <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+        <div className="flex items-center space-x-2.5">
+          <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
             <PieIcon className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-900">Segment Distribution</h3>
-            <p className="text-xs text-slate-500">Breakdown of customer base & revenue share</p>
+            <h3 className="text-sm font-bold text-white tracking-tight">Segment Distribution</h3>
+            <p className="text-[11px] text-slate-400">Customer volume vs revenue concentration</p>
           </div>
         </div>
 
         {/* Metric Toggle */}
-        <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+        <div className="flex items-center bg-white/[0.04] p-0.5 rounded-xl border border-white/[0.08]">
           <button
             onClick={() => setMetric('customers')}
-            className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+            className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               metric === 'customers'
-                ? 'bg-white text-indigo-700 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white/[0.14] text-white shadow-xs'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
-            By Count
+            Count
           </button>
           <button
             onClick={() => setMetric('revenue')}
-            className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+            className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               metric === 'revenue'
-                ? 'bg-white text-indigo-700 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white/[0.14] text-white shadow-xs'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
-            By Revenue
+            Revenue
           </button>
         </div>
       </div>
@@ -108,7 +108,7 @@ export default function SegmentDonut({ segments, onSelectSegment, selectedSegmen
               cy="50%"
               innerRadius={55}
               outerRadius={95}
-              paddingAngle={2}
+              paddingAngle={2.5}
               dataKey="value"
               cursor="pointer"
               onClick={(entry) => onSelectSegment(entry.raw)}
@@ -117,8 +117,8 @@ export default function SegmentDonut({ segments, onSelectSegment, selectedSegmen
                 <Cell 
                   key={`cell-${index}`} 
                   fill={entry.color} 
-                  stroke={selectedSegment?.segment === entry.name ? '#1e1b4b' : '#ffffff'}
-                  strokeWidth={selectedSegment?.segment === entry.name ? 3 : 1}
+                  stroke={selectedSegment?.segment === entry.name ? '#ffffff' : '#090b10'}
+                  strokeWidth={selectedSegment?.segment === entry.name ? 2.5 : 1}
                   className="transition-all hover:opacity-80 cursor-pointer"
                 />
               ))}
@@ -129,15 +129,15 @@ export default function SegmentDonut({ segments, onSelectSegment, selectedSegmen
       </div>
 
       {/* Mini Interactive Segment Chips */}
-      <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-100 max-h-24 overflow-y-auto">
+      <div className="flex flex-wrap gap-1.5 pt-2.5 border-t border-white/[0.06] max-h-24 overflow-y-auto">
         {data.map((item) => (
           <button
             key={item.name}
             onClick={() => onSelectSegment(item.raw)}
-            className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium transition-all cursor-pointer ${
+            className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer border ${
               selectedSegment?.segment === item.name
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'bg-white/[0.16] text-white border-white/[0.30] shadow-sm'
+                : 'bg-white/[0.03] text-slate-300 hover:bg-white/[0.07] border-white/[0.05]'
             }`}
           >
             <span
@@ -145,7 +145,7 @@ export default function SegmentDonut({ segments, onSelectSegment, selectedSegmen
               style={{ backgroundColor: item.color }}
             />
             <span>{item.name}</span>
-            <span className="ml-1 text-[10px] opacity-70">
+            <span className="ml-1 text-[9px] opacity-70 font-mono">
               ({metric === 'customers' ? `${item.pct}%` : `$${(item.value / 1000).toFixed(1)}k`})
             </span>
           </button>
