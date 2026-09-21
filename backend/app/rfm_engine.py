@@ -371,7 +371,7 @@ def process_rfm_data(df: pd.DataFrame, mapping: Dict[str, str]) -> Dict[str, Any
         mon_hist = grouped["mon_bucket"].value_counts().sort_index().reset_index()
         monetary_histogram = [{"range": str(row[grouped["mon_bucket"].name]), "count": int(row["count"])} for _, row in mon_hist.iterrows()]
     else:
-        monetary_histogram = [{"range": f"${round(mon_q[0], 2)}", "count": total_customers}]
+        monetary_histogram = [{"range": f"₹{round(mon_q[0], 2)}", "count": total_customers}]
 
     # Treemap data
     treemap_data = [

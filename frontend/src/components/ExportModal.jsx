@@ -143,7 +143,7 @@ export default function ExportModal({ isOpen, onClose, rfmData, activeDatasetNam
         s.segment,
         s.customer_count.toLocaleString(),
         `${s.pct_of_customers}%`,
-        `$${s.total_revenue.toLocaleString()}`,
+        `₹${s.total_revenue.toLocaleString()}`,
         `${s.pct_of_revenue}%`,
         `${s.avg_recency_days}d`,
         s.insight?.churn_risk || 'N/A',
