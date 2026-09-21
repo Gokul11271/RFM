@@ -10,25 +10,25 @@ import {
   PlayCircle, 
   CheckCircle2, 
   Sliders, 
-  ShoppingBag,
-  Building2,
-  FileSpreadsheet,
+  ShoppingBag, 
+  Building2, 
+  FileSpreadsheet, 
   Lightbulb
 } from 'lucide-react';
 
 const SEGMENTS_DATABASE = [
   {
     name: "Champions",
-    tag: "VIP / Elite",
+    tag: "VIP / Elite Spenders",
     category: "high_value",
-    r_range: "Score 4–5 (Recent: 1–25 days)",
+    r_range: "Score 4–5 (Recent: 1–20 days)",
     f_range: "Score 4–5 (8+ orders)",
-    m_range: "Score 4–5 (Highest spend)",
+    m_range: "Score 4–5 (Highest spend >₹35,000)",
     churn_risk: "Low",
-    headline: "Your most valuable customers who buy frequently and spend the most.",
-    tactics: ["VIP early-access product drops", "Dedicated concierge support", "Referral ambassador incentives"],
-    channels: ["Direct VIP SMS", "Personal Executive Email"],
-    offer: "Exclusive Early Access + Complimentary VIP Gift"
+    headline: "Your most valuable Indian consumers who buy frequently and spend the most.",
+    tactics: ["48hr festive early-access pass (Diwali / New Year)", "Dedicated WhatsApp VIP Concierge desk", "1-click ₹500 UPI cashback referral loops"],
+    channels: ["Verified WhatsApp VIP Channel", "Direct Executive Calling", "VIP In-App Lounge"],
+    offer: "Exclusive Early Access + Complimentary Silver/Gold Coin Gift Box on orders >₹4,999"
   },
   {
     name: "Loyal Customers",
@@ -36,12 +36,12 @@ const SEGMENTS_DATABASE = [
     category: "high_value",
     r_range: "Score 3–5 (Recent: 15–60 days)",
     f_range: "Score 3–5 (4–10 orders)",
-    m_range: "Score 3–5 (Above-average spend)",
+    m_range: "Score 3–5 (Spend ₹15,000–₹35,000)",
     churn_risk: "Low",
-    headline: "Steady buyers who trust your brand and respond well to promotions.",
-    tactics: ["Loyalty points multipliers", "Cross-category upsells", "Milestone anniversary rewards"],
-    channels: ["Personalized Email", "Targeted Push Alerts"],
-    offer: "20% Bonus Loyalty Points on Complementary Categories"
+    headline: "Steady buyers who trust your brand and respond well to WhatsApp promotions.",
+    tactics: ["2x loyalty coins on weekend drops", "Cross-category D2C recommendations", "Festive greeting vouchers"],
+    channels: ["WhatsApp Verified Broadcast", "Personalized Email", "Instagram Retargeting"],
+    offer: "20% Bonus Loyalty Coins + Free Priority Delivery across all Indian Pin Codes"
   },
   {
     name: "Potential Loyalists",
@@ -49,12 +49,12 @@ const SEGMENTS_DATABASE = [
     category: "growth",
     r_range: "Score 4–5 (Recent: 5–35 days)",
     f_range: "Score 1–3 (2–4 orders)",
-    m_range: "Score 2–5 (Good spend)",
+    m_range: "Score 2–5 (Spend ₹8,000–₹20,000)",
     churn_risk: "Medium-Low",
-    headline: "Recent high-potential shoppers who are primed to become Champions.",
-    tactics: ["Time-sensitive 14-day repeat voucher", "Membership onboarding flow", "Product rating prompts"],
-    channels: ["Email Automation Flow", "WhatsApp / SMS Drops"],
-    offer: "15% Off Your Next Order within 14 Days"
+    headline: "Recent high-potential shoppers ready to be accelerated into Champions.",
+    tactics: ["Time-sensitive 14-day repeat voucher", "VIP club membership onboarding", "Post-delivery WhatsApp survey"],
+    channels: ["WhatsApp Automation Flow", "SMS Alert", "Meta Ads"],
+    offer: "Flat ₹300 Off Your Next Order within 14 Days (Code: SPEED300)"
   },
   {
     name: "Recent Customers",
@@ -62,77 +62,77 @@ const SEGMENTS_DATABASE = [
     category: "growth",
     r_range: "Score 4–5 (Recent: 1–15 days)",
     f_range: "Score 1 (1 order)",
-    m_range: "Score 1–3 (Entry spend)",
+    m_range: "Score 1–3 (Spend ₹1,000–₹5,000)",
     churn_risk: "Medium",
     headline: "First-time buyers in the critical initial 30-day onboarding window.",
-    tactics: ["Post-purchase unboxing guide", "Second-order bridge coupon", "Satisfaction check-in survey"],
-    channels: ["Welcome Email Drip", "SMS Order Confirmation"],
-    offer: "$15 Credit Towards Your Second Order"
+    tactics: ["Unboxing & styling WhatsApp guide", "Second-order bridge coupon", "Delivery & COD feedback check-in"],
+    channels: ["WhatsApp Welcome Flow", "SMS Verification", "In-App Notification"],
+    offer: "Flat ₹250 Instant Cashback Voucher on Your Second Order"
   },
   {
     name: "Promising",
-    tag: "Value Growth",
+    tag: "Basket Size Upside",
     category: "growth",
     r_range: "Score 3–4 (Recent: 20–60 days)",
     f_range: "Score 1–2 (1–2 orders)",
-    m_range: "Score 3–5 (High basket size)",
+    m_range: "Score 3–5 (High basket spend >₹8,000)",
     churn_risk: "Medium",
-    headline: "High-spend buyers with low order frequency. Strong revenue upside.",
-    tactics: ["Bundle & volume discounts", "Seasonal catalog showcase", "Brand social proof"],
-    channels: ["Curated Newsletters", "Social Retargeting"],
-    offer: "Tiered Spend-and-Save: $25 Off Orders Over $100"
+    headline: "High-spend Indian buyers with low order cadence. Strong revenue upside.",
+    tactics: ["Payday 1st-week salary campaigns", "Bundle & combo savings ('Buy 2 Get 1')", "Indian creator reviews & styling reels"],
+    channels: ["Curated WhatsApp Drops", "Instagram Retargeting", "SMS Flash Sales"],
+    offer: "Tiered Spend & Save: ₹500 Off on ₹2,499+ | ₹1,200 Off on ₹4,999+"
   },
   {
     name: "Customers Needing Attention",
-    tag: "Early Warning",
+    tag: "Re-engagement Window",
     category: "risk",
     r_range: "Score 2–3 (Dormancy: 45–90 days)",
     f_range: "Score 2–3 (2–4 orders)",
     m_range: "Score 2–3 (Moderate spend)",
     churn_risk: "Medium-High",
     headline: "Above-average buyers slipping away due to stretched purchase intervals.",
-    tactics: ["'We Miss You' personalized email", "Limited 7-day comeback voucher", "Preference inquiry quiz"],
-    channels: ["Dynamic Re-engagement Email", "Meta / Google Audiences"],
-    offer: "Special 20% 'Welcome Back' Savings Code (Valid 7 Days)"
+    tactics: ["Personalized 'We Miss You' WhatsApp note", "7-day countdown comeback coupon", "Product preference survey"],
+    channels: ["Dynamic WhatsApp Triggers", "SMS Reconnect", "Custom Meta Audiences"],
+    offer: "Special 20% 'Welcome Back' Savings Code (Valid for 7 Days)"
   },
   {
     name: "About to Sleep",
-    tag: "Cooling Off",
+    tag: "Cooling Down",
     category: "risk",
     r_range: "Score 2–3 (Dormancy: 60–120 days)",
     f_range: "Score 1–2 (1–2 orders)",
-    m_range: "Score 1–2 (Low spend)",
+    m_range: "Score 1–2 (Spend <₹4,000)",
     churn_risk: "High",
-    headline: "Low recency and low frequency buyers at high risk of full churn.",
-    tactics: ["Aggressive clearance discount", "Best-sellers highlight showcase", "Channel preference check"],
-    channels: ["Reactivation Series", "Paid Display Retargeting"],
-    offer: "25% Off Everything + Free Shipping"
+    headline: "Low recency and low frequency buyers at high risk of permanent churn.",
+    tactics: ["Aggressive clearance discount drop", "Showcase Indian best-sellers & new arrivals", "Notification frequency adjustment"],
+    channels: ["Reactivation WhatsApp Series", "Display Retargeting", "SMS Alert"],
+    offer: "Flat 25% Off Everything + Free Delivery across India"
   },
   {
     name: "At Risk",
-    tag: "Urgent Defense",
+    tag: "Urgent Revenue Defense",
     category: "risk",
     r_range: "Score 1–2 (Dormancy: 90–240 days)",
     f_range: "Score 3–5 (3–8 orders)",
-    m_range: "Score 3–5 (High historical spend)",
+    m_range: "Score 3–5 (High historical spend >₹18,000)",
     churn_risk: "Critical",
-    headline: "Former heavy spenders on the verge of churn. Represents severe revenue loss.",
-    tactics: ["High-stakes win-back sequence", "Direct phone / concierge outreach", "Major new catalog announcement"],
-    channels: ["VIP Win-Back Email", "Outbound Executive Call"],
-    offer: "Exclusive $50 Comeback Credit on Orders Over $150"
+    headline: "Former heavy spenders on the verge of full churn. Severe revenue loss risk.",
+    tactics: ["High-stakes win-back message from Founder", "Personal concierge tele-call", "Major catalog overhaul announcement"],
+    channels: ["VIP WhatsApp Direct", "Outbound Concierge Call", "High-Bid Retargeting"],
+    offer: "Exclusive ₹1,000 Comeback Credit on Orders Above ₹2,999"
   },
   {
     name: "Can't Lose Them",
-    tag: "Whale Churn",
+    tag: "Whale Churn Defense",
     category: "risk",
     r_range: "Score 1 (Dormancy: 120+ days)",
     f_range: "Score 4–5 (7+ orders)",
-    m_range: "Score 4–5 (Top 5% lifetime spend)",
+    m_range: "Score 4–5 (Top 5% lifetime spend >₹45,000)",
     churn_risk: "Critical",
-    headline: "Historical whales currently dormant. Immediate executive intervention mandatory.",
-    tactics: ["Executive direct outreach from VP/Founder", "Free premium gift package", "Exit interview to resolve friction"],
-    channels: ["Founder Direct Email", "Physical Executive Mailer"],
-    offer: "Complimentary Executive Gift + Personal Concierge Booking"
+    headline: "Historical whales currently dormant in India. Immediate executive intervention mandatory.",
+    tactics: ["Direct executive outreach from VP/Founder", "Complimentary physical festive gift box", "Friction diagnosis interview"],
+    channels: ["Founder Direct Outreach", "Physical Luxury Gift Box", "VIP Support Desk"],
+    offer: "Complimentary Executive Gift Hamper + Personal Concierge Booking"
   },
   {
     name: "Hibernating",
@@ -143,22 +143,22 @@ const SEGMENTS_DATABASE = [
     m_range: "Score 1–2 (Low spend)",
     churn_risk: "High",
     headline: "Long-dormant, low-frequency buyers best suited for automated batch campaigns.",
-    tactics: ["Automated warehouse clearance drops", "List hygiene & sunset check", "Low-cost programmatic retargeting"],
-    channels: ["Automated Batch Email", "Display Network"],
-    offer: "Warehouse Liquidation: Extra 30% Off Clearance Items"
+    tactics: ["Automated clearance WhatsApp blast", "WhatsApp template hygiene check", "Low-cost programmatic retargeting"],
+    channels: ["Automated Batch SMS / WhatsApp", "Display Network"],
+    offer: "Warehouse Liquidation: Extra 30% Off Clearance Categories"
   },
   {
     name: "Lost",
-    tag: "Full Churn",
+    tag: "Final Sunset",
     category: "dormant",
     r_range: "Score 1 (Dormancy: 200+ days)",
     f_range: "Score 1 (1 order)",
     m_range: "Score 1 (Lowest spend)",
     churn_risk: "Critical",
     headline: "Fully churned contacts with lowest historical engagement.",
-    tactics: ["Final 'Farewell' opt-in email", "End-of-year extreme incentive drop", "Database archive to reduce SaaS costs"],
-    channels: ["Final Sunset Automated Email"],
-    offer: "Last Call: Take $25 Off Any Order Today Only"
+    tactics: ["Final 'Farewell' opt-in SMS", "Annual festive extreme incentive drop", "CRM database scrub to save SaaS costs"],
+    channels: ["Final Automated Scrub SMS"],
+    offer: "Last Call: Take Flat ₹500 Off Any Order Today Only"
   }
 ];
 
@@ -166,10 +166,10 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Interactive RFM Simulator State
+  // Interactive RFM Simulator State in Indian Rupees (INR ₹)
   const [simRecency, setSimRecency] = useState(14);
   const [simFrequency, setSimFrequency] = useState(6);
-  const [simMonetary, setSimMonetary] = useState(650);
+  const [simMonetary, setSimMonetary] = useState(28500);
 
   // Compute simulated RFM score
   const simScores = useMemo(() => {
@@ -188,10 +188,10 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
     else f = 1;
 
     let m = 1;
-    if (simMonetary >= 1000) m = 5;
-    else if (simMonetary >= 450) m = 4;
-    else if (simMonetary >= 200) m = 3;
-    else if (simMonetary >= 80) m = 2;
+    if (simMonetary >= 35000) m = 5;
+    else if (simMonetary >= 18000) m = 4;
+    else if (simMonetary >= 8000) m = 3;
+    else if (simMonetary >= 3000) m = 2;
     else m = 1;
 
     let segment = "Potential Loyalists";
@@ -232,7 +232,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
   return (
     <div className="min-h-screen bg-[#090b10] text-slate-100 font-sans selection:bg-amber-500 selection:text-slate-950 pb-20">
       
-      {/* Subtle Ambient Radial Lighting */}
+      {/* Subtle Ambient Lighting */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[650px] overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-15%] left-[25%] w-[550px] h-[550px] bg-amber-500/[0.08] rounded-full blur-[140px]" />
         <div className="absolute top-[10%] right-[20%] w-[500px] h-[500px] bg-indigo-500/[0.07] rounded-full blur-[150px]" />
@@ -249,7 +249,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
           {/* Badge */}
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold backdrop-blur-md animate-in fade-in duration-300">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Behavioral Science & AI Retention Architecture</span>
+            <span>Behavioral Science & AI Retention Engine for Indian E-Commerce</span>
           </div>
 
           {/* Main Title */}
@@ -262,7 +262,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
 
           {/* Subtitle */}
           <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed">
-            Quantile-based **Recency, Frequency & Monetary (RFM)** analytics combined with plain-English AI playbooks to identify VIP spenders, defend against churn, and maximize customer lifetime value.
+            Harness **Recency, Frequency & Monetary (RFM)** quantiles tailored with plain-English AI retention playbooks for Indian D2C brands, retail enterprises, and SaaS to maximize repeat sales.
           </p>
 
           {/* CTAs */}
@@ -283,7 +283,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
               className="px-5 py-3.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.10] text-slate-200 font-semibold text-xs sm:text-sm transition-all hover:text-white flex items-center space-x-2 cursor-pointer"
             >
               <Sliders className="w-4 h-4 text-amber-400" />
-              <span>Try Live RFM Simulator</span>
+              <span>Try Live RFM Simulator (₹)</span>
             </button>
           </div>
 
@@ -296,15 +296,15 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
             </div>
 
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.07] backdrop-blur-md">
-              <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Scoring Method</p>
-              <p className="text-xl font-bold text-white mt-1">1–5 Quintiles</p>
-              <p className="text-[11px] text-amber-400 mt-0.5">Ranked percentile bins</p>
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Indian Currency</p>
+              <p className="text-xl font-bold text-white mt-1">INR (₹)</p>
+              <p className="text-[11px] text-amber-400 mt-0.5">Rupee metrics & playbooks</p>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.07] backdrop-blur-md">
               <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Intelligence</p>
               <p className="text-xl font-bold text-white mt-1">Offline + LLM</p>
-              <p className="text-[11px] text-cyan-400 mt-0.5">Gemini, Claude & GPT-4</p>
+              <p className="text-[11px] text-cyan-400 mt-0.5">WhatsApp & UPI playbooks</p>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.07] backdrop-blur-md">
@@ -326,7 +326,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
               What is RFM Customer Segmentation?
             </h2>
             <p className="text-xs sm:text-sm text-slate-400">
-              RFM is an established mathematical model used by leading global retailers, SaaS companies, and consumer brands to quantify loyalty and exposure across 3 core behavioral metrics.
+              RFM is an established mathematical model to quantify customer loyalty and churn risk across 3 behavioral dimensions.
             </p>
           </div>
 
@@ -343,7 +343,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                 </div>
                 <h3 className="text-base font-bold text-white mb-1.5">Recency (Days Inactive)</h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Elapsed days between the customer's most recent order and the analysis date. Lower days signify high brand affinity and active retention.
+                  Elapsed days between the customer's last order and the analysis snapshot. Lower days signify high brand engagement.
                 </p>
               </div>
 
@@ -368,20 +368,20 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                 <div className="inline-block px-2 py-0.5 rounded-md bg-violet-500/15 text-violet-300 text-[10px] font-mono font-bold mb-2">
                   DIMENSION: F
                 </div>
-                <h3 className="text-base font-bold text-white mb-1.5">Frequency (Order Count)</h3>
+                <h3 className="text-base font-bold text-white mb-1.5">Frequency (Order Cadence)</h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Total unique orders or billing cycles completed. Highlights recurring habitual buyers vs. one-time exploratory acquisitions.
+                  Total unique orders or billing transactions placed by the account. Identifies habitual repeat buyers vs one-time trial accounts.
                 </p>
               </div>
 
               <div className="pt-3 border-t border-white/[0.06] space-y-1 text-xs font-mono">
                 <div className="flex justify-between text-slate-300">
                   <span className="text-slate-500">Score 5:</span>
-                  <span className="text-emerald-400 font-semibold">8+ lifetime orders</span>
+                  <span className="text-emerald-400 font-semibold">8+ repeat orders</span>
                 </div>
                 <div className="flex justify-between text-slate-300">
                   <span className="text-slate-500">Score 1:</span>
-                  <span className="text-rose-400 font-semibold">1 single order only</span>
+                  <span className="text-rose-400 font-semibold">1 single order</span>
                 </div>
               </div>
             </div>
@@ -393,11 +393,11 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                   <DollarSign className="w-5 h-5" />
                 </div>
                 <div className="inline-block px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-mono font-bold mb-2">
-                  DIMENSION: M
+                  DIMENSION: M (₹)
                 </div>
-                <h3 className="text-base font-bold text-white mb-1.5">Monetary (Total Spend)</h3>
+                <h3 className="text-base font-bold text-white mb-1.5">Monetary (Cumulative Spend)</h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Cumulative lifetime spend generated by the customer. Identifies top-percentile whale accounts driving the 80/20 revenue rule.
+                  Cumulative spend generated in Indian Rupees (₹). Identifies top-percentile whale accounts driving the majority of revenue.
                 </p>
               </div>
 
@@ -418,20 +418,20 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
         </section>
 
         {/* ============================================================ */}
-        {/* SECTION: LIVE RFM SCORE SIMULATOR (INTERACTIVE) */}
+        {/* SECTION: LIVE RFM SCORE SIMULATOR (INR ₹) */}
         {/* ============================================================ */}
         <section id="simulator" className="space-y-8 scroll-mt-20">
           
           <div className="text-center space-y-3 max-w-2xl mx-auto">
             <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold">
               <Sliders className="w-3.5 h-3.5 text-amber-400" />
-              <span>Interactive Model Simulator</span>
+              <span>Interactive Model Simulator (₹)</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Test the Live RFM Calculation Engine
+              Test the Live RFM Calculation Engine in Rupees (₹)
             </h2>
             <p className="text-xs sm:text-sm text-slate-400">
-              Adjust the customer behavioral metrics below to compute quintile ranks and reveal the assigned cohort and AI retention playbook in real time.
+              Adjust the customer behavioral metrics below to compute quintile ranks and reveal the assigned cohort and Indian retention playbook in real time.
             </p>
           </div>
 
@@ -492,62 +492,62 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                 </div>
               </div>
 
-              {/* Monetary Slider */}
+              {/* Monetary Slider in INR (₹) */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs">
                   <span className="font-bold text-slate-300 flex items-center space-x-1.5">
                     <DollarSign className="w-4 h-4 text-emerald-400" />
-                    <span>Monetary (Cumulative Spend)</span>
+                    <span>Monetary Spend in INR (₹)</span>
                   </span>
                   <span className="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 font-mono font-bold text-xs border border-emerald-500/25">
-                    ${simMonetary.toLocaleString()}
+                    ₹{simMonetary.toLocaleString()}
                   </span>
                 </div>
                 <input
                   type="range"
-                  min="20"
-                  max="3000"
-                  step="20"
+                  min="500"
+                  max="100000"
+                  step="500"
                   value={simMonetary}
                   onChange={(e) => setSimMonetary(Number(e.target.value))}
                   className="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
                 />
                 <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                  <span>$20</span>
-                  <span>$1,000</span>
-                  <span>$3,000+</span>
+                  <span>₹500 (Trial)</span>
+                  <span>₹35,000 (Substantial)</span>
+                  <span>₹1,00,000+ (VIP Whale)</span>
                 </div>
               </div>
 
               {/* Quick Presets */}
               <div className="pt-2">
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-2">
-                  Archetype Presets:
+                  Indian Market Archetype Presets:
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <button
-                    onClick={() => { setSimRecency(5); setSimFrequency(12); setSimMonetary(1800); }}
+                    onClick={() => { setSimRecency(5); setSimFrequency(12); setSimMonetary(68000); }}
                     className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.09] text-xs font-medium text-slate-200 cursor-pointer border border-white/[0.06]"
                   >
-                    👑 VIP Champion
+                    👑 VIP Champion (₹68k)
                   </button>
                   <button
-                    onClick={() => { setSimRecency(160); setSimFrequency(9); setSimMonetary(1400); }}
+                    onClick={() => { setSimRecency(160); setSimFrequency(8); setSimMonetary(42000); }}
                     className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.09] text-xs font-medium text-slate-200 cursor-pointer border border-white/[0.06]"
                   >
-                    ⚠️ High Spender At-Risk
+                    ⚠️ High Spender At-Risk (₹42k)
                   </button>
                   <button
-                    onClick={() => { setSimRecency(8); setSimFrequency(1); setSimMonetary(65); }}
+                    onClick={() => { setSimRecency(8); setSimFrequency(1); setSimMonetary(2499); }}
                     className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.09] text-xs font-medium text-slate-200 cursor-pointer border border-white/[0.06]"
                   >
-                    🌱 New Acquisition
+                    🌱 New Acquisition (₹2.5k)
                   </button>
                   <button
-                    onClick={() => { setSimRecency(280); setSimFrequency(1); setSimMonetary(30); }}
+                    onClick={() => { setSimRecency(280); setSimFrequency(1); setSimMonetary(999); }}
                     className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.09] text-xs font-medium text-slate-200 cursor-pointer border border-white/[0.06]"
                   >
-                    💤 Churned / Lost
+                    💤 Churned / Lost (₹999)
                   </button>
                 </div>
               </div>
@@ -608,7 +608,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                   <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-2">
                     <p className="text-[10px] font-bold text-amber-300 flex items-center space-x-1.5">
                       <Lightbulb className="w-3.5 h-3.5" />
-                      <span>Recommended Action Tactics:</span>
+                      <span>Recommended Indian Market Actions:</span>
                     </p>
                     <ul className="text-xs text-slate-300 space-y-1">
                       {simScores.segment.tactics.map((t, i) => (
@@ -621,7 +621,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                   </div>
 
                   <div className="text-xs text-slate-400">
-                    <span className="text-slate-500">Best Strategy Offer:</span>{' '}
+                    <span className="text-slate-500">Best Promotional Offer:</span>{' '}
                     <strong className="text-slate-200 font-medium">{simScores.segment.offer}</strong>
                   </div>
 
@@ -661,7 +661,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                 The 11 Standard Customer Cohorts
               </h2>
               <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                Explore every cohort, their behavioral definitions, churn triggers, and proven retention playbooks.
+                Explore every cohort, their behavioral definitions, churn triggers, and proven retention playbooks in Rupees (₹).
               </p>
             </div>
 
@@ -770,13 +770,13 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
           <div className="text-center space-y-3 max-w-2xl mx-auto">
             <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold">
               <FileSpreadsheet className="w-3.5 h-3.5" />
-              <span>Synthetic Datasets</span>
+              <span>Indian Market Synthetic Datasets</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Curated Datasets for Instant Analysis
+              Curated Datasets for Instant Analysis in INR (₹)
             </h2>
             <p className="text-xs sm:text-sm text-slate-400">
-              Test drive the platform immediately with our realistic synthetic datasets or download clean CSV templates.
+              Test drive the platform immediately with our realistic Indian consumer datasets or download clean CSV templates.
             </p>
           </div>
 
@@ -790,17 +790,17 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                     <ShoppingBag className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-white">Global E-Commerce Retail (B2C)</h3>
-                    <p className="text-xs text-slate-400">Modeled after UCI Online Retail transactions</p>
+                    <h3 className="text-base font-bold text-white">Indian D2C & Retail E-Commerce (B2C)</h3>
+                    <p className="text-xs text-slate-400">Modeled with INR (₹) transactions across Indian Pin Codes</p>
                   </div>
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  Contains **4,200 transactions** across 750 customer accounts with realistic spend curves in Electronics, Fashion, Home, and Beauty.
+                  Contains **4,200 transactions** across 750 Indian buyers in Ethnic Wear, Smart Electronics, Home Appliances, and Ayurvedic Wellness.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-1.5 text-[10px] font-mono text-slate-400">
                   <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">CustomerID</span>
                   <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">InvoiceDate</span>
-                  <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">Amount</span>
+                  <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">Amount (₹)</span>
                   <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">ProductCategory</span>
                 </div>
               </div>
@@ -815,7 +815,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                 </button>
                 <a
                   href="/api/rfm/sample-csv"
-                  download="ecommerce_retail_rfm_sample.csv"
+                  download="indian_retail_rfm_sample.csv"
                   className="p-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] text-slate-300 transition-colors border border-white/[0.08]"
                   title="Download CSV"
                 >
@@ -832,17 +832,17 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                     <Building2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-white">B2B Cloud SaaS Subscriptions</h3>
-                    <p className="text-xs text-slate-400">Recurring MRR, seat add-ons & subscription tiers</p>
+                    <h3 className="text-base font-bold text-white">Indian B2B Cloud SaaS Subscriptions</h3>
+                    <p className="text-xs text-slate-400">Recurring MRR in INR (₹), GST billing invoices & tiers</p>
                   </div>
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  Contains **2,800 billing cycles** across 400 B2B accounts spanning Starter, Growth, Professional, and Enterprise subscription tiers.
+                  Contains **2,800 billing cycles** across 400 Indian B2B companies spanning Startup, Growth, Scale, and Enterprise subscription plans.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-1.5 text-[10px] font-mono text-slate-400">
                   <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">AccountID</span>
                   <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">BillingDate</span>
-                  <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">MRR_Amount</span>
+                  <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">MRR_Amount (₹)</span>
                   <span className="px-2 py-0.5 rounded-md bg-white/[0.04]">SubscriptionTier</span>
                 </div>
               </div>
@@ -857,7 +857,7 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
                 </button>
                 <a
                   href="/api/rfm/sample-saas-csv"
-                  download="saas_subscription_rfm_sample.csv"
+                  download="indian_saas_rfm_sample.csv"
                   className="p-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] text-slate-300 transition-colors border border-white/[0.08]"
                   title="Download CSV"
                 >
@@ -876,10 +876,10 @@ export default function LandingPage({ onLaunchDashboard, onLoadSample, onLoadSaa
         <section className="rounded-3xl bg-gradient-to-r from-amber-500/[0.08] via-white/[0.02] to-indigo-500/[0.08] border border-white/[0.12] p-8 sm:p-12 text-center space-y-6 shadow-2xl">
           <div className="max-w-2xl mx-auto space-y-3">
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              Ready to Segment Your Customer Base?
+              Ready to Segment Your Customer Base in India?
             </h2>
             <p className="text-xs sm:text-sm text-slate-400">
-              Upload your transaction logs or explore our live studio with instant interactive visualizations and AI strategy copilot.
+              Upload your transaction logs or explore our live studio with instant Rupee (₹) analytics and AI strategy copilot.
             </p>
           </div>
 
